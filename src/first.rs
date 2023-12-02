@@ -4,8 +4,10 @@ use std::io;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-pub fn first(path: impl AsRef<Path>) -> io::Result<usize>
+pub fn first(path: impl AsRef<Path>, part: u8) -> io::Result<usize>
 {
+	let part = if part==1 { false } else { true };
+
 	let file = match File::open(path)
 	{
 		Ok(f) => f,
@@ -18,14 +20,14 @@ pub fn first(path: impl AsRef<Path>) -> io::Result<usize>
 	{
 		match line
 		{
-			Ok(mut s) => {
+			Ok(s) => {
 
 				if s.is_empty()
 				{
 					continue;
 				}
 
-				sum += digit_sum(&s);
+				sum += digit_sum(&s, part);
 			},
 			Err(e) => return Err(e),
 		}
@@ -34,20 +36,34 @@ pub fn first(path: impl AsRef<Path>) -> io::Result<usize>
 	return Ok(sum);
 }
 
-fn digit_sum(line: &str) -> usize
+fn digit_sum(line: &str, part: bool) -> usize
 {
-	let patterns = vec![
-		//("0", 0), ("zero", 0),
-		("1", 1), ("one", 1),
-		("2", 2), ("two", 2),
-		("3", 3), ("three", 3),
-		("4", 4), ("four", 4),
-		("5", 5), ("five", 5),
-		("6", 6), ("six", 6),
-		("7", 7), ("seven", 7),
-		("8", 8), ("eight", 8),
-		("9", 9), ("nine", 9)
+	let mut patterns = vec![
+	("1", 1),
+	("2", 2),
+	("3", 3),
+	("4", 4),
+	("5", 5),
+	("6", 6),
+	("7", 7),
+	("8", 8),
+	("9", 9),
 	];
+	if part
+	{
+		patterns.extend(vec![
+			("one", 1),
+			("two", 2),
+			("three", 3),
+			("four", 4),
+			("five", 5),
+			("six", 6),
+			("seven", 7),
+			("eight", 8),
+			("nine", 9),
+		]
+		);
+	}
 
 	let mut min = usize::MAX;
 	let mut max = 0;

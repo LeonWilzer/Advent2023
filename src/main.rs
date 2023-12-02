@@ -1,9 +1,10 @@
-mod first;
+#![feature(string_remove_matches)]
 
-use std::io::BufRead;
+mod first;
+mod second;
+
 use std::str::FromStr;
 use clap::{Error, Parser, ValueEnum};
-use clap::builder::TypedValueParser;
 use clap::error::ErrorKind;
 use crate::Advent::{Eighteenth, Eighth, Eleventh, Fifteenth, Fifth, First, Fourteenth, Fourth, Nineteenth, Ninth, Second, Seventeenth, Seventh, Sixteenth, Sixth, Tenth, Third, Thirteenth, Twelfth, Twentieth, TwentyFifth, TwentyFirst, TwentyFourth, TwentySecond, TwentyThird};
 
@@ -16,8 +17,11 @@ struct Args{
 	advent: Advent,
 
 	/// Working directory
-	#[arg(short, long, default_value = ".")]
-	directory: String
+	#[arg(short, long)]
+	input: String,
+
+	#[arg(short, long, default_value = "false")]
+	part: u8
 }
 
 fn main() {
@@ -25,8 +29,8 @@ fn main() {
 
 	match args.advent
 	{
-		First => println!("Calibration: {}", first::first(format!("{}/res/1/calibration", args.directory)).unwrap()),
-		Second => {}
+		First => println!("Calibration: {}", first::first(args.input, args.part).unwrap()),
+		Second => println!("Cube Game: {}", second::second(args.input, args.part)),
 		Third => {}
 		Fourth => {}
 		Fifth => {}
